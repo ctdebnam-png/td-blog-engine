@@ -1,0 +1,59 @@
+name: SEO Blog Generator
+
+on:
+  schedule:
+    - cron: '0 10 * * 1'
+  workflow_dispatch:
+    inputs:
+      community:
+        description: 'Target community (or "all")'
+        required: true
+        default: 'all'
+        type: string
+      content_type:
+        description: 'Content type'
+        required: true
+        default: 'market_update'
+        type: choice
+        options:
+          - market_update
+          - community_guide
+          - home_buying
+          - home_selling
+          - mortgage_rates
+          - neighborhood
+      iterations:
+        description: 'Iterations per post'
+        required: false
+        default: '5'
+        type: string
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: Run optimizer
+        run: |
+          COMMUNITY="${{ github.event.inputs.community || 'all' }}"
+          TYPE="${{ github.event.inputs.content_type || 'market_update' }}"
+          ITERATIONS="${{ github.event.inputs.iterations || '5' }}"
+          if [ "$COMMUNITY" = "all" ]; then
+            python batch.py --type "$TYPE" --all --iterations "$ITERATIONS"
+          else
+            python optimizer.py --community "$COMMUNITY" --type "$TYPE" --iterations "$ITERATIONS"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: blog-posts-${{ github.run_number }}
+          path: output/
+          retention-days: 30
