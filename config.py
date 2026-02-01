@@ -136,4 +136,16 @@ CONTENT_TYPES = {
         "description": "Neighborhood spotlight or comparison",
         "target_keywords_pattern": "best neighborhoods {community} Ohio",
     },
+    "homebuyer_programs": {
+        "description": "Guide to Ohio first-time homebuyer programs, down payment assistance, and grants available in a specific community",
+        "target_keywords_pattern": "first time home buyer programs {community} Ohio {year}",
+    },
+    "local_events": {
+        "description": "Guide to local events, festivals, farmers markets, and community activities in a specific area",
+        "target_keywords_pattern": "events and things to do in {community} Ohio {year}",
+    },
+    "local_history": {
+        "description": "Historical facts, landmarks, and interesting locations in a specific community",
+        "target_keywords_pattern": "history of {community} Ohio interesting facts",
+    },
 }
